@@ -5,4 +5,4 @@ menu = "main"
 disable_comments = true
 +++
 
-Add some information about yourself.
+I am an Application Developer at ThoughtWorks. Undergraduate in CS from Pune Institute of Computer Technology batch of 2016.

@@ -2,7 +2,7 @@
 title: "Python Getattr"
 date: 2017-10-25T19:00:00+05:30
 tags: ["python"]
-draft: true
+draft: false
 ---
 
 Today I learnt about `__getattr__` in python. Usually I have seen code where we have

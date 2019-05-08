@@ -1,8 +1,8 @@
 ---
 title: "Http Stream with python"
 date: 2017-10-25T19:30:05+05:30
-tags: ["http"]["python"]
-draft: true
+tags: ["http", "python"]
+draft: false
 ---
 
 When downloading a large file via http it has to be in chunks because lot of memory would be used or sometimes it would not fit also depending on RAM size.
