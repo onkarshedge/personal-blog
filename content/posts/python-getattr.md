@@ -1,7 +1,7 @@
 ---
 title: "Python Getattr"
 date: 2017-10-25T19:00:00+05:30
-tags: ["python"]
+categories: ["python"]
 draft: false
 ---
 

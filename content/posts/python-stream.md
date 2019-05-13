@@ -1,7 +1,8 @@
 ---
 title: "Http Stream with python"
 date: 2017-10-25T19:30:05+05:30
-tags: ["http", "python"]
+tags: ["http"]
+categories: ["python"]
 draft: false
 ---
 

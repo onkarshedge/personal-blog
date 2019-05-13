@@ -20,7 +20,7 @@ theme = "hugo-icarus-theme"
 [params]
     # Tell me who you are
     author = "Onkar Shedge"
-    bio = "Programmer - Polyglot - trying to be better than yesterday"
+    bio = "Programmer - Polyglot - footballer - trekker - forgetful"
     location = "Pune"
     site_description = ""
     copyright  = "Powered by [Hugo](//gohugo.io). Theme by [PPOffice](http://github.com/ppoffice)."

@@ -1,7 +1,7 @@
 ---
 title: "Python Requirements"
 date: 2017-10-25T18:49:22+05:30
-tags: ["python"]
+categories: ["python"]
 draft: false
 ---
 
