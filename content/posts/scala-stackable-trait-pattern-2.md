@@ -7,7 +7,7 @@ categories: ["scala"]
 Scala 2.12  
 In the last [post](/posts/scala-stackable-trait-pattern), I talked about linearization and how the super call is resolved. In this post, I will talk more about the application.
 
-```
+``` scala
 import scala.collection.mutable.ArrayBuffer
 
 trait Queue {
@@ -89,7 +89,7 @@ In this manner, the stackables modify the behavior of whatever core they are mix
 
 Following is the implementation of same problem statement in Java 8
 
-```
+``` scala
 import java.util.LinkedList;
 
 interface Queue {

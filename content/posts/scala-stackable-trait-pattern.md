@@ -8,7 +8,7 @@ Scala 2.12
 In Scala you can extend a class, trait, object with multiple traits. This pattern is known as mixins or stackable traits. 
  But before that let's understand how Scala solves the diamond inheritance problem. One word answer is by **`linearization`**. Consider the following traits present.
  
- ```
+ ``` scala
     trait A {
      println("trait A constructed")
      def foo(): Unit = println("A printed")
@@ -35,7 +35,7 @@ In Scala you can extend a class, trait, object with multiple traits. This patter
     
 ```
 The output of the following code will be
-```
+``` shell script
 trait A constructed
 trait B constructed
 trait C constructed
@@ -48,7 +48,7 @@ From left to right traits are constructed, but for the trait to be constructed a
 it is not reconstructed again. Hence first for B, A was constructed then B and when we came to C, C's parent A was already constructed, so only C was left.
 
 However, if B and C both the traits didn't extend A, then `class Alphabet extends B with C` would throw a compile time error
-```
+``` shell script
 class Alphabet inherits conflicting members:
  method foo in trait B of type => Unit  and
  method foo in trait C of type => Unit
@@ -57,7 +57,7 @@ class Alphabet inherits conflicting members:
 ```
 
 **`super.foo()`**. The above example did not have any super calls. Let's see what happens if there is a super.foo() call.
-```
+``` scala
 trait A {
   println("trait A constructed")
   def foo(): Unit = {
@@ -109,7 +109,7 @@ The construction order will be A -> B -> C -> DBase -> D. Hence the linearizatio
 Thus, the super call is dynamically resolved according to the linearization order, D's super.foo will call DBase's foo but since DBase's foo does not have a super.foo it cannot call C's foo.
 The output of above code will be.
 
-```
+``` shell script
 trait A constructed
 trait B constructed
 trait C constructed
@@ -121,7 +121,7 @@ Dbase printed
 ```
 
 But if the class Alphabet is implemented as such
-```
+``` scala
 class Alphabet extends DBase with B with A with C with D {
   override def foo():Unit = {
     println("alphabet")
@@ -130,7 +130,7 @@ class Alphabet extends DBase with B with A with C with D {
 ```
 The linearization order will be D ->  C -> B -> A -> DBase (reverse of construction order). Now D's super corresponds to C and not DBase.
 A does not have a super call, hence DBase foo is never called. The output will be 
-```
+``` shell script output
 trait DBase constructed
 trait A constructed
 trait B constructed
