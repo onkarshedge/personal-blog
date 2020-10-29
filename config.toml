@@ -117,7 +117,7 @@ theme = "LoveIt"
     #  Custom content (HTML format is supported)
     custom = ''
     #  whether to show Hugo and theme info
-    hugo = true
+    hugo = false
     #  whether to show copyright info
     copyright = false
     #  whether to show the author
