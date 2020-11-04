@@ -1,6 +1,6 @@
 ---
 title: "Zero Copy"
-date: 2020-10-28T11:42:14+05:30
+date: 2020-11-03T11:42:14+05:30
 draft: false
 categories: ["kafka"]
 tags: ["distributed-systems"]
@@ -12,7 +12,7 @@ a simple version of Kafka. Unmesh has done an exceptional work of pulling code s
 moved away from the zookeeper.
 
 #### Problem
-We want to transfer some file contents, which are accessed sequentially over the network through TCP socket. Application process does not transform the data.
+We want to transfer some file contents over the network through TCP socket. The file is accessed sequentially. Application process does not transform the data.
 How do we transfer it efficiently ?  
 
 #### Solution Iteration 1
@@ -21,7 +21,9 @@ We use the high level programming language features to open, read, seek to a par
 > write(int socket_file_descriptor, const void *socket_buffer, size_t count);
 
 Pretty straightforward right ?. Let's see what's happening under the hood. There are two system calls fired `read`, `write`. The data has been copied multiple times. From kernel space buffer to user space buffer in read system call and from user space buffer
-to kernel space buffer in write system call. System calls are relatively expensive computationally. There are 4 context switch between userspace and kernel space. One of the reasons the kernel space exists is for protected environment (remember ring0, ring3 in x86 architecture ?), abstraction of access to physical devices etc.  
+to kernel space buffer in write system call. There are 4 switches between userspace and kernel space. This is not a very expensive operation but blocking system calls like read, write are.
+The user process issuing these calls will go into waiting state and OS will context switch it with another process. The registers state need to stored somewhere and later restored.
+ One of the reasons the kernel space exists is for protected environment (remember ring0, ring3 in x86 architecture ?), abstraction of access to physical devices etc.  
 
 {{< image src="/images/read_write.jpg" caption="Read and Write separate calls">}}
 
@@ -35,6 +37,9 @@ Other approach is using `mmap()` system call instead of read. The number of syst
 The number of context switches will still be the same. The difference is that process reads/writes to shared memory region i.e page cache. No copy needs to be created in user space.
 Reads/Writes happen in size of page sizes (usually 4kB). OS will lazily load pages on request.
 mmap is useful when reading portion of a file, random access, share memory with other processes. Not performant for reading very large files. Time has been traded off for space.  
+
+{{< image src="/images/read_write_mmap.jpg" caption="Send file copy">}}
+
 Can we do better ?
 
 #### Final Solution
@@ -74,7 +79,12 @@ Similarly, Broker-2, Broker-3 are followers for partition-2, requesting to Broke
 The leader and follower communicate overt TCP socket.
 When a follower sends a pull request for a partition to the leader eg. `consumeRequest(topic, partition, partition.lastOffset() + 1, brokerId)`, the leader has to read messages from a particular file from a given offset
 and send it over the network to the follower. It does not need to do any transformation/processing of the messages.
-> logFileChannel.transferTo(offSetRequest, size, socketChannel);
+>  @Override
+      public long transferFrom(FileChannel fileChannel, long position, long count) throws IOException {
+          return fileChannel.transferTo(position, count, socketChannel);
+      }
+
+Above snippet is from kafka code. java.nio package provides transferTo method which internally does a sendfile system call. 
   
 
 
