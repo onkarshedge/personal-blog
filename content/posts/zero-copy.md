@@ -16,14 +16,17 @@ We want to transfer some file contents over the network through TCP socket. The 
 How do we transfer it efficiently ?  
 
 #### Solution Iteration 1
-We use the high level programming language features to open, read, seek to a particular offset and close the file. Accept socket connection, write to the socket, close it. 
+We use the high level programming language api to open, read, seek to a particular offset and close the file. Accept socket connection, write to the socket, close it. 
+Pretty straightforward right ?. Let's see what's happening under the hood. There are two system calls fired `read`, `write`.
+
 > read(int file_descriptor, void *file_buffer, size_t count);  
 > write(int socket_file_descriptor, const void *socket_buffer, size_t count);
 
-Pretty straightforward right ?. Let's see what's happening under the hood. There are two system calls fired `read`, `write`. The data has been copied multiple times. From kernel space buffer to user space buffer in read system call and from user space buffer
-to kernel space buffer in write system call. There are 4 switches between userspace and kernel space. This is not a very expensive operation but blocking system calls like read, write are.
-The user process issuing these calls will go into waiting state and OS will context switch it with another process. The registers state need to stored somewhere and later restored.
- One of the reasons the kernel space exists is for protected environment (remember ring0, ring3 in x86 architecture ?), abstraction of access to physical devices etc.  
+The data has been copied multiple times. From kernel space buffer to user space buffer in read system call and from user space buffer
+to kernel space buffer in write system call. One of the reasons the kernel space exists is for protected environment (remember ring0, ring3 in x86 architecture ?), abstraction of access to physical devices etc.
+There are 4 switches between userspace and kernel space. This is not a very expensive operation but blocking system calls like read, write are.
+The user process issuing these calls will go into waiting state and OS will context switch it with another process. The registers state need to stored somewhere and later restored during a context switch.
+   
 
 {{< image src="/images/read_write.jpg" caption="Read and Write separate calls">}}
 
@@ -40,7 +43,9 @@ mmap is useful when reading portion of a file, random access, share memory with 
 
 {{< image src="/images/read_write_mmap.jpg" caption="Send file copy">}}
 
+{{< admonition type=question title="Question" open=true >}}
 Can we do better ?
+{{< /admonition >}}
 
 #### Final Solution
 As we know the data is only copied to and fro from kernel space and not processed in the user space. We can leverage `sendfile system call`. This will avoid copying data multiple times.
@@ -79,11 +84,11 @@ Similarly, Broker-2, Broker-3 are followers for partition-2, requesting to Broke
 The leader and follower communicate overt TCP socket.
 When a follower sends a pull request for a partition to the leader eg. `consumeRequest(topic, partition, partition.lastOffset() + 1, brokerId)`, the leader has to read messages from a particular file from a given offset
 and send it over the network to the follower. It does not need to do any transformation/processing of the messages.
->  @Override
+``` java
       public long transferFrom(FileChannel fileChannel, long position, long count) throws IOException {
           return fileChannel.transferTo(position, count, socketChannel);
       }
-
+```
 Above snippet is from kafka code. java.nio package provides transferTo method which internally does a sendfile system call. 
   
 
