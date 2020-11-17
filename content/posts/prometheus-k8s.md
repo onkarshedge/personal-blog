@@ -75,7 +75,7 @@ kubectl port-forward -n monitoring service/prometheus-grafana 3100:80
 ```
 
 Browse the Prometheus UI. In Status/Targets, You shall find some predefined Targets. Under Configuration, you will find:  
-``` 
+``` yaml
 global:
   scrape_interval: 30s
   scrape_timeout: 10s
@@ -91,7 +91,7 @@ We will talk about it in [later section](#appendix).
 
 #### Deploying our application 
 
-Build image with `./gradlew bootBuildImage`. Spring boot 2.3 has this gradle task which creates optimised docker image.
+Build image with `./gradlew bootBuildImage`. Spring boot 2.3 has this gradle task which creates optimised docker image. More info [here](https://spring.io/blog/2020/01/27/creating-docker-images-with-spring-boot-2-3-0-m1).
 Deploy in `my-app-dev` namespace that we created earlier.  
 **Deployment.yaml**
 ```yaml
