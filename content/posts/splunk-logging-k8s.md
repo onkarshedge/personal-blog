@@ -281,12 +281,12 @@ Kubernetes only supports json-file logging driver and is not configurable.
 {{< /admonition >}}
 
 #### Links
-[1] [https://splunk.github.io/docker-splunk/](https://splunk.github.io/docker-splunk/)
-[2] [https://docs.splunk.com/Documentation/SplunkCloud/8.1.2008/SearchReference/Commontimeformatvariables](https://docs.splunk.com/Documentation/SplunkCloud/8.1.2008/SearchReference/Commontimeformatvariables)
-[3] [https://docs.splunk.com/Documentation/Splunk/8.1.0/Knowledge/Usedefaultfields](https://docs.splunk.com/Documentation/Splunk/8.1.0/Knowledge/Usedefaultfields)
-[4] [https://github.com/splunk/splunk-connect-for-kubernetes/blob/main/helm-chart/splunk-connect-for-kubernetes/values.yaml](https://github.com/splunk/splunk-connect-for-kubernetes/blob/main/helm-chart/splunk-connect-for-kubernetes/values.yaml)
-[5] [https://docs.docker.com/config/containers/logging/configure/](https://docs.docker.com/config/containers/logging/configure/)
-[6] [https://github.com/onkarshedge/hello-metric](https://github.com/onkarshedge/hello-metric)
+1) [https://splunk.github.io/docker-splunk/](https://splunk.github.io/docker-splunk/)
+2) [https://docs.splunk.com/Documentation/SplunkCloud/8.1.2008/SearchReference/Commontimeformatvariables](https://docs.splunk.com/Documentation/SplunkCloud/8.1.2008/SearchReference/Commontimeformatvariables)
+3) [https://docs.splunk.com/Documentation/Splunk/8.1.0/Knowledge/Usedefaultfields](https://docs.splunk.com/Documentation/Splunk/8.1.0/Knowledge/Usedefaultfields)
+4) [https://github.com/splunk/splunk-connect-for-kubernetes/blob/main/helm-chart/splunk-connect-for-kubernetes/values.yaml](https://github.com/splunk/splunk-connect-for-kubernetes/blob/main/helm-chart/splunk-connect-for-kubernetes/values.yaml)
+5) [https://docs.docker.com/config/containers/logging/configure/](https://docs.docker.com/config/containers/logging/configure/)
+6) [https://github.com/onkarshedge/hello-metric](https://github.com/onkarshedge/hello-metric)
 
 
 
