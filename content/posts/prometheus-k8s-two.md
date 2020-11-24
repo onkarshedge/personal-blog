@@ -2,8 +2,8 @@
 title: "Monitoring applications in K8s with Prometheus - 2"
 date: 2020-11-13T17:58:22+05:30
 draft: false
-categories: ["monitoring"]
-tags: ["prometheus", "grafana"]
+categories: ["prometheus", "grafana"]
+tags: ["monitoring"]
 ---
 
 #### Continued

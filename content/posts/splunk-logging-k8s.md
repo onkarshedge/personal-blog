@@ -1,7 +1,9 @@
 ---
 title: "Logging in K8s with Splunk"
 date: 2020-11-16T11:44:46+05:30
-draft: true
+draft: false
+tags: ["logging"]
+categories: ["splunk"]
 ---
 
 #### Why Splunk ?
