@@ -1,3 +1,3 @@
 [submodule "themes/LoveIt"]
 	path = themes/LoveIt
-	url = https://github.com/dillonzq/LoveIt
+	url = git@github.com:onkarshedge/LoveIt.git
