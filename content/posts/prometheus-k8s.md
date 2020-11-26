@@ -9,13 +9,13 @@ categories: ["prometheus", "grafana"]
 #### Versions used
 > Docker for desktop: 2.3.0  
 > Kubernetes: 1.16.5  
-> Prometheus: helm-chart v9.0  
+> Prometheus: helm-chart v9.0 (2.22)    
 > Spring boot: 2.3.4  
 > Java : 11  
 
 #### Sample Application with metrics in Prometheus format
-You can have a sample application in any language which emits metrics in Prometheus format.
-I have a hello-world spring boot application. We will have to add prometheus dependency in build.gradle.
+We need a sample application in any language which emits metrics in Prometheus format.
+I have a [hello-metric](https://github.com/onkarshedge/hello-metric)[1] spring boot application. The build.gradle includes the prometheus dependency.
 ```groovy
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -30,9 +30,8 @@ management.endpoints.web.exposure.include=info, health, prometheus
 management.endpoints.web.path-mapping.prometheus=metrics
 management.metrics.enable.all=true
 ```
-When you visit `/actuator/metrics` path you will see metrics in prometheus format. Something like below. Prometheus metric format has become popular that 
-is also used in OpenMetrics project. 
-> The format is: `<metric name>{<label name>=<label value>, ...}`
+When we visit `/actuator/metrics` path, we will see metrics in prometheus format. Something like below.
+> The format is: `<metric name>{<label name>=<label value>, ...} <metric_value>`
 ``` prometheus
 # TYPE http_server_requests_seconds summary
   http_server_requests_seconds_count{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/actuator/metrics",} 1.0
@@ -44,9 +43,10 @@ is also used in OpenMetrics project.
   jvm_memory_max_bytes{area="heap",id="G1 Eden Space",} -1.0
   jvm_memory_max_bytes{area="nonheap",id="Compressed Class Space",} 1.073741824E9
 ```
-
+Prometheus metric format has become popular it is also used in OpenMetrics project.
+ 
 #### Installing Prometheus
-I will be installing prometheus and it's components in `monitoring` namespace and my hello-world application in `my-app-dev`.
+We will install prometheus, and it's components in `monitoring` namespace and the hello-metric application in `my-app-dev` namespace.
 ```shell script
 kubectl create ns monitoring
 kubectl create ns my-app-dev
@@ -55,7 +55,7 @@ helm install prometheus prometheus-community/kube-prometheus-stack -n monitoring
 kubectl get all -n monitoring
 ```
 
-You will see a lot of components installed: 
+We will see a lot of components installed: 
  
 | No. | k8s object | description |
 | --- | ---------- | ----------- |
@@ -66,15 +66,15 @@ You will see a lot of components installed:
 | 5 | statefulset.apps/prometheus-prometheus-kube-prometheus-prometheus |  Prometheus  | 
 | 6 | statefulset.apps/alertmanager-prometheus-kube-prometheus-alertmanager | AlertManager to configure alerts based on rules. |
 
-Let's access the Prometheus UI and Grafana UI. Visit [http://localhost:9090](http://localhost:9090), [http://locahost:3100](http://locahost:3100) respectively.
-The credentials for grafana are `username: admin` & `password: prom-operator`. You can also get the password from k8s secrets.
 
 ```shell script
 kubectl port-forward -n monitoring pod/prometheus-prometheus-kube-prometheus-prometheus-0  9090
 kubectl port-forward -n monitoring service/prometheus-grafana 3100:80
 ```
+Let's access the Prometheus UI and Grafana UI. Visit [http://localhost:9090](http://localhost:9090), [http://locahost:3100](http://locahost:3100) respectively.
+The credentials for grafana are `username: admin` & `password: prom-operator`. We can also get the password from k8s secrets.
 
-Browse the Prometheus UI. In Status/Targets, You shall find some predefined Targets. Under Configuration, you will find:  
+Browse the Prometheus UI. In Status/Targets, We shall find some predefined Targets. Under Configuration, we will see the following:  
 ``` yaml
 global:
   scrape_interval: 30s
@@ -82,7 +82,7 @@ global:
   evaluation_interval: 30s
 ```
 
-In Grafana, you shall find some dashboards already configured for Nodes, Namespace workloads, Pods, Kube API server etc. Here is a CPU usage sample.
+In Grafana, we shall find some dashboards already configured for Nodes, Namespace workloads, Pods, Kube API server etc. Here is a CPU usage sample.
 
 {{< image src="/images/prom_grafana_sample.png" caption="CPU Usage">}}
 
@@ -91,7 +91,7 @@ We will talk about it in [later section](#appendix).
 
 #### Deploying our application 
 
-Build image with `./gradlew bootBuildImage`. Spring boot 2.3 has this gradle task which creates optimised docker image. More info [here](https://spring.io/blog/2020/01/27/creating-docker-images-with-spring-boot-2-3-0-m1).
+Build image with `./gradlew bootBuildImage`. Spring boot 2.3 has this gradle task which creates optimised docker image. More info [here](https://spring.io/blog/2020/01/27/creating-docker-images-with-spring-boot-2-3-0-m1)[2].
 Deploy in `my-app-dev` namespace that we created earlier.  
 **Deployment.yaml**
 ```yaml
@@ -152,12 +152,14 @@ It won't be accessible on host machine. You can either port-forward or make it N
 {{< admonition type=question title="Question" open=true >}}
 Coming to the main part how to tell prometheus to scrape metrics at `/actuator/metrics` endpoint of our applicaiton ?.
 {{</admonition>}}
-Answer: *Service Monitor*  
+> Answer: **Service Monitor**
+  
 The helm install of prometheus stack created some CRDs. One of which is service monitor.
-Service monitor is where we declare from which service to scrape metrics and the interval. Like other k8s resources it also works on matching labels.
-I am creating this service monitor in monitoring namespace.  
-One important thing is the prometheus object in monitoring namespace wouldn't know about this service monitor until you have the label 
-`release: prometheus`. If you describe prometheus resource. `kubectl describe prometheus -n monitoring` you will find that it matches service monitors on this label.
+Service monitor is where we declare from which service to scrape metrics and the interval. 
+Like other k8s resources it also works on matching labels.    
+One important thing is the prometheus object in monitoring namespace wouldn't know about this service monitor until we have the label 
+`release: prometheus`. If we describe prometheus resource. `kubectl describe prometheus -n monitoring` we will find that it matches service monitors on this label.
+  
 ```yaml
   Service Monitor Selector:
       Match Labels:
@@ -173,7 +175,7 @@ metadata:
   namespace: monitoring
   labels:
     app: hello-metric
-    release: prometheus # imp had forgot this, if you do describe prometheus resource there is a servicemonitor selector for this label
+    release: prometheus # imp had forgot this, if we describe prometheus resource there is a servicemonitor selector for this label
 spec:
   selector:
     matchLabels:
@@ -188,16 +190,22 @@ spec:
     matchNames:
       - my-app-dev
 ```
-Wuhoo!!, In targets, we should see our target hello-metric. 
+Wuhoo!! In targets, we should see our target hello-metric. Both the pods are up.
 {{< image src="/images/prom_target_hello.png" caption="Hello Target">}}
 
-In promql you can execute a sample query: `jvm_memory_used_bytes{job="hello-metric"}`.    
-You can filter metrics with labels. The output is shown only for that instant. In range tab you can give a time range.
+In promql we can execute a sample query: `jvm_memory_used_bytes{job="hello-metric"}`. We can further filter the metrics data series with labels eg. `namespace="my-app-dev"`  
+The output is shown only for that instant. In range tab we can give a time range eg. last 1h to see more values.
 We will talk more about the PromQL in [Part-2]({{< ref "prometheus-k8s-two" >}} "Part-2"), and I will show a sample service availability dashboard in Grafana.
 
 #### Appendix{#appendix}
-The PromQL Query of the Grafana CPU usage dashboard uses custom metric expression. Under rules in prometheus you shall find `alerting.rules` and `recording.rules`.  
+The PromQL Query of the Grafana CPU usage dashboard uses custom metric expression. Under rules in prometheus we shall find `alerting.rules` and `recording.rules`.  
 From Prometheus documentation:  
 > Recording rules allow you to precompute frequently needed or computationally expensive expressions and save their result as a new set of time series.
 > Querying the precomputed result will then often be much faster than executing the original expression every time it is needed.
 > This is especially useful for dashboards, which need to query the same expression repeatedly every time they refresh.
+
+#### Links
+1) https://github.com/onkarshedge/hello-metric
+2) https://spring.io/blog/2020/01/27/creating-docker-images-with-spring-boot-2-3-0-m1
+3) [Monitoring applications in K8s with Prometheus - 2]({{< ref "prometheus-k8s-two" >}} "Part-2")
+

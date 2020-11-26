@@ -193,6 +193,8 @@ Here is a list of supported [logging drivers](https://docs.docker.com/config/con
 In `/var/log/pods/<namespace_name>_<pod_name>_<pod_id>/<pod_name>/0.log` file we will find the logs of the pod. This file is a symbolic link.
 `pods/my-app-dev_hello-metric-599c644944-xdvtg_0a82a499-567b-42d1-a0e1-624c254ddc4d/hello-metric/0.log -> /var/lib/docker/containers/<container_id>-json.log`
 
+{{< image src="/images/k8s-logging.png" caption="Logging Architecture" >}}
+
 Here is sample log event from the file.
 ``` json
 {
