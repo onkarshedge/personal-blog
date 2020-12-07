@@ -170,7 +170,20 @@ We can see 3 metrics:
 3) http_server_requests_seconds_sum{} : Sum of request durations (counter)
 
 Histogram bucket counter are cumulative. Number of requests with less than 200ms duration is 1. Number of requests with less 500ms (including the le=0.2 bucket) is 3.
-It is **not** between 200ms and 500ms.
+It is **not** between 200ms and 500ms.  
+
+We can see the timeseries for each bucket(label le) 0.2, 0.5, 0.75, +Inf etc. Since it is cumulative the +Inf will be on top.
+{{< image src="/images/prom_histogram_buckets.png" caption="Histogram buckets count">}}
+
+We can find the median(0.5), 3rd quantile, 95th percentile of the response times.
+{{< image src="/images/prom_histogram_quantile.png" caption="Histogram Quantile">}}
+
+Histogram bar chart, showing the distribution of response times. Note the format is *Heatmap*
+{{< image src="/images/grafana_histogram_bar.png" caption="Histogram Bar Chart">}}
+
+With Heatmap visualization, we can view the change in histogram over time. In data format, choose timeseries buckets[3].
+On Y-axis we have our buckets and X-axis interval of 1min. Each vertical slice is one histogram. Since it is a counter, we will have to use increase.
+{{< image src="/images/grafana_histogram_heatmap.png" caption="Histogram Heatmap">}}
 
 > rate(http_server_requests_seconds_sum{outcome="SUCCESS",uri="/greeting"}[1m])   
 > **/**  
@@ -265,6 +278,7 @@ We will use kube-state-metrics to get information about change of Kubernetes obj
 ### Links
 1) https://prometheus.io/docs/practices/histograms/
 2) https://prometheus.io/docs/concepts/metric_types/
+3) https://grafana.com/blog/2020/06/23/how-to-visualize-prometheus-histograms-in-grafana/
 
 <!--
 
